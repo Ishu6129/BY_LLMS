@@ -9,6 +9,8 @@ let mineCount = 5;
 let multiplier = 1;
 let currentWinnings = 0;
 let transactionType = 'deposit';
+let lastRenderTime = 0;
+const fps = 30;
 
 // DOM Elements
 const balanceElement = document.getElementById('balanceValue');
@@ -47,22 +49,59 @@ function init() {
     setupEventListeners();
     renderGrid();
     generateQRCode();
-    setupApp();
+    setupTouchControls();
+    requestAnimationFrame(gameLoop);
 }
 
 // Setup PWA features
 function setupApp() {
-    // Prevent zooming on mobile
     document.addEventListener('gesturestart', function(e) {
         e.preventDefault();
     });
+}
+
+// Game Loop
+function gameLoop(timestamp) {
+    if (timestamp - lastRenderTime < 1000/fps) {
+        requestAnimationFrame(gameLoop);
+        return;
+    }
+    lastRenderTime = timestamp;
     
-    // Prevent scrolling when touching game elements
-    document.querySelectorAll('.cell, button').forEach(el => {
-        el.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-        }, { passive: false });
-    });
+    // Update game state if needed
+    requestAnimationFrame(gameLoop);
+}
+
+// Setup Touch Controls
+function setupTouchControls() {
+    let touchStartTime = 0;
+    let touchStartX, touchStartY;
+    
+    gameGrid.addEventListener('touchstart', (e) => {
+        if (!gameActive) return;
+        const touch = e.touches[0];
+        touchStartTime = Date.now();
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+        e.preventDefault();
+    }, { passive: false });
+    
+    gameGrid.addEventListener('touchend', (e) => {
+        if (!gameActive || Date.now() - touchStartTime > 300) return;
+        
+        const touch = e.changedTouches[0];
+        const touchEndX = touch.clientX;
+        const touchEndY = touch.clientY;
+        
+        if (Math.abs(touchEndX - touchStartX) < 10 && Math.abs(touchEndY - touchStartY) < 10) {
+            const element = document.elementFromPoint(touchEndX, touchEndY);
+            if (element && element.classList.contains('cell')) {
+                const index = parseInt(element.dataset.index);
+                handleCellClick(index);
+            }
+        }
+        e.preventDefault();
+    }, { passive: false });
 }
 
 // Update Balance Display
@@ -100,35 +139,6 @@ function setupEventListeners() {
     // Input Validation
     betAmountInput.addEventListener('change', validateBetAmount);
     mineCountInput.addEventListener('change', validateMineCount);
-    
-    // Touch event for better mobile support
-    gameGrid.addEventListener('touchstart', handleTouchStart, { passive: false });
-}
-
-let touchStartX, touchStartY;
-
-function handleTouchStart(e) {
-    if (!gameActive) return;
-    const touch = e.touches[0];
-    touchStartX = touch.clientX;
-    touchStartY = touch.clientY;
-    e.preventDefault();
-}
-
-function handleTouchEnd(e) {
-    if (!gameActive) return;
-    const touch = e.changedTouches[0];
-    const touchEndX = touch.clientX;
-    const touchEndY = touch.clientY;
-    
-    // Check if it's a tap (not swipe)
-    if (Math.abs(touchEndX - touchStartX) < 10 && Math.abs(touchEndY - touchStartY) < 10) {
-        const element = document.elementFromPoint(touchEndX, touchEndY);
-        if (element && element.classList.contains('cell')) {
-            const index = parseInt(element.dataset.index);
-            handleCellClick(index);
-        }
-    }
 }
 
 // Adjust Input Values
@@ -171,7 +181,6 @@ function generateQRCode() {
         return;
     }
 
-    // Create mines position string
     const positions = mines.map(index => {
         const row = Math.floor(index / 5) + 1;
         const col = (index % 5) + 1;
@@ -189,7 +198,6 @@ function startGame() {
     const betAmount = parseInt(betAmountInput.value);
     mineCount = parseInt(mineCountInput.value);
     
-    // Validate inputs
     if (isNaN(betAmount) || betAmount < 1) {
         showGameError('Please enter a valid bet amount');
         return;
@@ -205,25 +213,21 @@ function startGame() {
         return;
     }
     
-    // Deduct bet from balance
     balance -= betAmount;
     currentBet = betAmount;
     updateBalance();
     
-    // Reset game state
     gameActive = true;
     revealedCells = 0;
     multiplier = 1;
     currentWinnings = 0;
     mines = [];
     
-    // Update UI
     gameResult.textContent = 'Game started! Tap cells to reveal';
     gameResult.className = 'result-message';
     claimBtn.disabled = true;
     claimAmountElement.textContent = '0.00';
     
-    // Generate mines and render grid
     generateMines();
     renderGrid();
     generateQRCode();
@@ -234,7 +238,6 @@ function generateMines() {
     mines = [];
     const positions = Array.from({length: totalCells}, (_, i) => i);
     
-    // Fisher-Yates shuffle
     for (let i = positions.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [positions[i], positions[j]] = [positions[j], positions[i]];
@@ -254,7 +257,6 @@ function renderGrid() {
         
         if (gameActive) {
             cell.addEventListener('click', () => handleCellClick(i));
-            cell.addEventListener('touchend', handleTouchEnd);
         }
         
         gameGrid.appendChild(cell);
@@ -262,40 +264,41 @@ function renderGrid() {
 }
 
 // Handle Cell Click
-function handleCellClick(index) {
-    if (!gameActive) return;
-    
-    const cell = document.querySelector(`.cell[data-index="${index}"]`);
-    if (cell.classList.contains('revealed')) return;
-    
-    cell.classList.add('revealed');
-    
-    // Check if it's a mine
-    if (mines.includes(index)) {
-        cell.classList.add('mine');
-        gameOver(false);
-    } else {
-        cell.classList.add('gem');
-        revealedCells++;
+const handleCellClick = (function() {
+    let lastClick = 0;
+    return function(index) {
+        const now = Date.now();
+        if (now - lastClick < 300) return;
+        lastClick = now;
         
-        // Calculate multiplier and winnings
-        const safeCells = totalCells - mineCount;
-        const riskFactor = revealedCells / safeCells;
-        multiplier = 1 + (riskFactor * (mineCount / safeCells) * 10);
-        currentWinnings = currentBet * multiplier;
+        const cell = document.querySelector(`.cell[data-index="${index}"]`);
+        if (cell.classList.contains('revealed')) return;
         
-        // Update UI
-        gameResult.textContent = `Multiplier: ${multiplier.toFixed(2)}x | Potential: $${currentWinnings.toFixed(2)}`;
-        gameResult.className = 'result-message win';
-        claimBtn.disabled = false;
-        claimAmountElement.textContent = currentWinnings.toFixed(2);
+        cell.classList.add('revealed');
         
-        // Check if all safe cells are revealed
-        if (revealedCells === safeCells) {
-            claimWinnings();
+        if (mines.includes(index)) {
+            cell.classList.add('mine');
+            gameOver(false);
+        } else {
+            cell.classList.add('gem');
+            revealedCells++;
+            
+            const safeCells = totalCells - mineCount;
+            const riskFactor = revealedCells / safeCells;
+            multiplier = 1 + (riskFactor * (mineCount / safeCells) * 10);
+            currentWinnings = currentBet * multiplier;
+            
+            gameResult.textContent = `Multiplier: ${multiplier.toFixed(2)}x | Potential: $${currentWinnings.toFixed(2)}`;
+            gameResult.className = 'result-message win';
+            claimBtn.disabled = false;
+            claimAmountElement.textContent = currentWinnings.toFixed(2);
+            
+            if (revealedCells === safeCells) {
+                claimWinnings();
+            }
         }
-    }
-}
+    };
+})();
 
 // Claim Winnings
 function claimWinnings() {

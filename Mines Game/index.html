@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <title>PucchuMines</title>
@@ -14,41 +14,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Pucchu Mines">
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
-    
-    <!-- PWA Installation Handler -->
-    <script>
-        let deferredPrompt;
-        const installButton = document.createElement('button');
-        
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            
-            // Create install button if not exists
-            if(!document.getElementById('installBtn')) {
-                installButton.id = 'installBtn';
-                installButton.className = 'btn-install';
-                installButton.innerHTML = '<i class="fas fa-download"></i> INSTALL APP';
-                document.body.appendChild(installButton);
-                
-                installButton.addEventListener('click', async () => {
-                    if(deferredPrompt) {
-                        deferredPrompt.prompt();
-                        const { outcome } = await deferredPrompt.userChoice;
-                        if(outcome === 'accepted') {
-                            installButton.style.display = 'none';
-                        }
-                        deferredPrompt = null;
-                    }
-                });
-            }
-        });
-
-        window.addEventListener('appinstalled', () => {
-            console.log('PWA was installed');
-            if(installButton) installButton.style.display = 'none';
-        });
-    </script>
 </head>
 <body>
     <!-- Install Button (will be shown when PWA is installable) -->
@@ -153,16 +118,19 @@
 
     <script src="script.js"></script>
     <script>
-        // Enhanced Service Worker Registration
+        // Enhanced Service Worker Registration with error handling
         if ('serviceWorker' in navigator) {
+            const swUrl = 'sw.js?v=' + Date.now(); // Cache-busting
+            
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('sw.js')
+                navigator.serviceWorker.register(swUrl)
                     .then(registration => {
-                        console.log('SW registered:', registration.scope);
-                        registration.update(); // Force update check
+                        registration.onupdatefound = () => {
+                            console.log('New SW found');
+                        };
                     })
                     .catch(err => {
-                        console.log('SW registration failed:', err);
+                        console.error('SW registration failed:', err);
                     });
             });
         }
