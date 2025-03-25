@@ -1,13 +1,13 @@
 
 FREE APP
 
-Created by WebIntoApp.com on Tuesday 25th of March 2025 05:34:17 PM.
+Created by WebIntoApp.com on Tuesday 25th of March 2025 05:49:42 PM.
 
 Release APK & App Bundle (AAB) ready to be submitted to Google Play Store 
 and to any other APK / AAB store over the internet.
 
 -------------------------------------
-App ID:			668034
+App ID:			668035
 App Key:		eCVRMDMgMxYukuvaLliPpNynNNaCbAZc
 App Name:		Pucchu Mines
 App Version:	1.0
@@ -23,7 +23,7 @@ Please note, your app is under a FREE mode, you can always
 convert it to your own dedicated and branded mobile app for 
 Android and iOS with all the premium features at:
 
-https://www.webintoapp.com/author/apps/668034/edit?cmd=app-switcher
+https://www.webintoapp.com/author/apps/668035/edit?cmd=app-switcher
 
 -------------------------------------
 Here are some useful links:
@@ -33,7 +33,7 @@ You can edit your app at:
 https://www.webintoapp.com/author/apps
 
 Get installs statistics at:
-https://www.webintoapp.com/author/stats?appid=668034
+https://www.webintoapp.com/author/stats?appid=668035
 
 The Author Area:
 https://www.webintoapp.com/author/dashboard

@@ -27,19 +27,27 @@ body {
     color: var(--text);
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     touch-action: manipulation;
+    padding: 20px;
+}
+
+.game-wrapper {
+    width: 100%;
+    max-width: 1000px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .game-container {
     width: 100%;
-    max-width: 1000px;
     background-color: var(--secondary);
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    margin: 20px;
 }
 
 /* Header Styles */
@@ -331,6 +339,30 @@ body {
     text-align: center;
 }
 
+/* Code Footer */
+.code-footer {
+    background-color: var(--secondary);
+    color: var(--text-secondary);
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 0.8rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.code-footer a {
+    color: var(--accent-light);
+    text-decoration: none;
+}
+
+.code-footer a:hover {
+    text-decoration: underline;
+}
+
+.code-footer p {
+    margin: 5px 0;
+}
+
 /* Modals */
 .modal {
     position: fixed;
@@ -413,7 +445,6 @@ body {
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
     .game-container {
-        margin: 10px;
         border-radius: 8px;
     }
     
