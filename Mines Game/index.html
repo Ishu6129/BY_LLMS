@@ -8,13 +8,54 @@
     <title>PucchuMines</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
-    <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.json" crossorigin="use-credentials">
+    <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4a3.svg">
     <meta name="theme-color" content="#ff6b6b">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Pucchu Mines">
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    
+    <!-- PWA Installation Handler -->
+    <script>
+        let deferredPrompt;
+        const installButton = document.createElement('button');
+        
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Create install button if not exists
+            if(!document.getElementById('installBtn')) {
+                installButton.id = 'installBtn';
+                installButton.className = 'btn-install';
+                installButton.innerHTML = '<i class="fas fa-download"></i> INSTALL APP';
+                document.body.appendChild(installButton);
+                
+                installButton.addEventListener('click', async () => {
+                    if(deferredPrompt) {
+                        deferredPrompt.prompt();
+                        const { outcome } = await deferredPrompt.userChoice;
+                        if(outcome === 'accepted') {
+                            installButton.style.display = 'none';
+                        }
+                        deferredPrompt = null;
+                    }
+                });
+            }
+        });
+
+        window.addEventListener('appinstalled', () => {
+            console.log('PWA was installed');
+            if(installButton) installButton.style.display = 'none';
+        });
+    </script>
 </head>
 <body>
+    <!-- Install Button (will be shown when PWA is installable) -->
+    <button id="installBtn" class="btn-install" style="display: none;">
+        <i class="fas fa-download"></i> INSTALL APP
+    </button>
+
     <div class="game-container">
         <header class="game-header">
             <div class="header-left">
@@ -112,12 +153,17 @@
 
     <script src="script.js"></script>
     <script>
-        // Register Service Worker for PWA
+        // Enhanced Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js')
-                    .then(registration => console.log('SW registered'))
-                    .catch(err => console.log('SW registration failed'));
+                    .then(registration => {
+                        console.log('SW registered:', registration.scope);
+                        registration.update(); // Force update check
+                    })
+                    .catch(err => {
+                        console.log('SW registration failed:', err);
+                    });
             });
         }
     </script>
