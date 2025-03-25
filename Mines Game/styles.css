@@ -1,0 +1,421 @@
+:root {
+    --primary: #0f0f1a;
+    --secondary: #1e1e3a;
+    --accent: #ff6b6b;
+    --accent-light: #ff8e8e;
+    --success: #00c853;
+    --danger: #ff1744;
+    --warning: #ff9100;
+    --text: #f0f0f0;
+    --text-secondary: #b0b0b0;
+    --cell-bg: #25254d;
+    --cell-hover: #3a3a6a;
+    --cell-revealed: #32325d;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: var(--primary);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    touch-action: manipulation;
+}
+
+.game-container {
+    width: 100%;
+    max-width: 1000px;
+    background-color: var(--secondary);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    margin: 20px;
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-light));
+    color: white;
+}
+
+.header-left h1 {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.game-tagline {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.balance-display {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.balance-label {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+.balance-amount {
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.game-main {
+    display: flex;
+    padding: 15px;
+    gap: 15px;
+    flex-direction: column;
+}
+
+.game-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.qr-sidebar {
+    width: 100%;
+    background-color: var(--cell-bg);
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.qr-container {
+    margin-top: 8px;
+    padding: 8px;
+    background: white;
+    border-radius: 5px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.qr-title {
+    font-size: 1rem;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.qr-instruction {
+    margin-top: 8px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+/* Game Controls */
+.control-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.bet-controls {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.input-group {
+    flex: 1;
+    min-width: 150px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.input-with-buttons {
+    display: flex;
+    align-items: center;
+}
+
+.input-with-buttons input {
+    flex: 1;
+    padding: 10px;
+    background-color: var(--cell-bg);
+    border: none;
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 1rem;
+    text-align: center;
+}
+
+.adjust-btn {
+    width: 36px;
+    height: 36px;
+    background-color: var(--cell-bg);
+    border: none;
+    color: var(--text);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    margin: 0 3px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-primary {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.btn-success {
+    background-color: var(--success);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.btn-secondary {
+    background-color: var(--cell-bg);
+    color: var(--text);
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+.game-info {
+    margin-top: 10px;
+}
+
+.result-message {
+    padding: 12px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    background-color: var(--cell-bg);
+    font-size: 0.9rem;
+}
+
+.win {
+    color: var(--success);
+    box-shadow: 0 0 10px rgba(0, 200, 83, 0.3);
+}
+
+.lose {
+    color: var(--danger);
+    box-shadow: 0 0 10px rgba(255, 23, 68, 0.3);
+}
+
+/* Game Board */
+.game-board {
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+}
+
+.mines-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    width: 100%;
+    max-width: 350px;
+}
+
+.cell {
+    aspect-ratio: 1/1;
+    background-color: var(--cell-bg);
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #2a2a4a;
+}
+
+.cell.revealed {
+    background-color: var(--cell-revealed);
+    cursor: default;
+}
+
+.cell.revealed.mine {
+    background-color: var(--danger);
+    animation: pulse 0.5s ease-in-out;
+}
+
+.cell.revealed.gem {
+    background-color: var(--success);
+    animation: pulse 0.5s ease-in-out;
+}
+
+.cell.revealed.mine::after {
+    content: '💣';
+    font-size: 24px;
+}
+
+.cell.revealed.gem::after {
+    content: '💎';
+    font-size: 24px;
+}
+
+/* Footer */
+.game-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 15px;
+    background-color: rgba(0, 0, 0, 0.2);
+    gap: 10px;
+}
+
+/* Modals */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background-color: var(--secondary);
+    border-radius: 10px;
+    padding: 20px;
+    width: 90%;
+    max-width: 350px;
+    border-left: 4px solid var(--accent);
+}
+
+.modal h2 {
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-body {
+    margin-bottom: 20px;
+}
+
+.modal-body label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.modal-body input {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--cell-bg);
+    border: none;
+    border-radius: 6px;
+    color: var(--text);
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* Responsive Design */
+@media (min-width: 768px) {
+    .game-main {
+        flex-direction: row;
+    }
+    
+    .qr-sidebar {
+        width: 250px;
+    }
+    
+    .header-left h1 {
+        font-size: 1.8rem;
+    }
+    
+    .game-tagline {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .bet-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .input-group {
+        min-width: 100%;
+    }
+    
+    .cell.revealed.mine::after,
+    .cell.revealed.gem::after {
+        font-size: 20px;
+    }
+}

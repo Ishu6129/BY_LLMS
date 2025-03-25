@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>PucchuMines</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+</head>
+<body>
+    <div class="game-container">
+        <header class="game-header">
+            <div class="header-left">
+                <h1><i class="fas fa-bomb"></i> PUCCHU MINES</h1>
+                <p class="game-tagline">Find diamonds, avoid bombs!</p>
+            </div>
+            <div class="header-right">
+                <div class="balance-display">
+                    <span class="balance-label">BALANCE:</span>
+                    <span class="balance-amount">$<span id="balanceValue">1000.00</span></span>
+                </div>
+            </div>
+        </header>
+
+        <main class="game-main">
+            <div class="game-content">
+                <section class="control-panel">
+                    <div class="bet-controls">
+                        <div class="input-group">
+                            <label for="betAmount">BET AMOUNT</label>
+                            <div class="input-with-buttons">
+                                <button class="adjust-btn" id="decreaseBet">-</button>
+                                <input type="number" id="betAmount" value="10" min="1">
+                                <button class="adjust-btn" id="increaseBet">+</button>
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="mineCount">NUMBER OF MINES</label>
+                            <div class="input-with-buttons">
+                                <button class="adjust-btn" id="decreaseMines">-</button>
+                                <input type="number" id="mineCount" value="5" min="1" max="24">
+                                <button class="adjust-btn" id="increaseMines">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button id="startGame" class="btn-primary">
+                            <i class="fas fa-play"></i> START GAME
+                        </button>
+                        <button id="claimBtn" class="btn-success" disabled>
+                            <i class="fas fa-coins"></i> CLAIM $<span id="claimAmount">0.00</span>
+                        </button>
+                    </div>
+
+                    <div class="game-info">
+                        <div id="gameResult" class="result-message"></div>
+                    </div>
+                </section>
+
+                <section class="game-board">
+                    <div id="gameGrid" class="mines-grid"></div>
+                </section>
+            </div>
+
+            <div class="qr-sidebar">
+                <h3 class="qr-title">Mines QR Code</h3>
+                <div class="qr-container" id="qrCode"></div>
+                <p class="qr-instruction">Scan to view mine locations</p>
+            </div>
+        </main>
+
+        <footer class="game-footer">
+            <button id="depositBtn" class="btn-secondary">
+                <i class="fas fa-arrow-down"></i> Deposit
+            </button>
+            <button id="withdrawBtn" class="btn-secondary">
+                <i class="fas fa-arrow-up"></i> Withdraw
+            </button>
+        </footer>
+    </div>
+
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle"><i class="fas fa-coins"></i> Deposit</h2>
+            <div class="modal-body">
+                <label for="amountInput">Amount:</label>
+                <input type="number" id="amountInput" placeholder="Enter amount">
+            </div>
+            <div class="modal-buttons">
+                <button id="confirmTransaction" class="btn-primary">Confirm</button>
+                <button id="cancelTransaction" class="btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <h2 id="messageTitle">Success</h2>
+            <p id="messageText">Operation completed successfully.</p>
+            <button id="closeMessage" class="btn-primary">OK</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Register Service Worker for PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(registration => console.log('SW registered'))
+                    .catch(err => console.log('SW registration failed'));
+            });
+        }
+    </script>
+</body>
+</html>
