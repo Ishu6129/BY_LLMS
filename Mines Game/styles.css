@@ -20,7 +20,6 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
-    touch-action: manipulation;
 }
 
 body {
@@ -30,11 +29,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    perspective: 1000;
-    overscroll-behavior: none;
+    touch-action: manipulation;
 }
 
 .game-container {
@@ -44,11 +39,10 @@ body {
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    display: flex;
-    flex-direction: column;
     margin: 20px;
 }
 
+/* Header Styles */
 .game-header {
     display: flex;
     justify-content: space-between;
@@ -90,6 +84,7 @@ body {
     font-weight: bold;
 }
 
+/* Main Game Area */
 .game-main {
     display: flex;
     padding: 15px;
@@ -104,6 +99,205 @@ body {
     gap: 15px;
 }
 
+/* Control Panel */
+.control-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.bet-controls {
+    display: flex;
+    gap: 15px;
+}
+
+.input-group {
+    flex: 1;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.input-with-buttons {
+    display: flex;
+    align-items: center;
+}
+
+.input-with-buttons input {
+    flex: 1;
+    padding: 10px;
+    background-color: var(--cell-bg);
+    border: none;
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 1rem;
+    text-align: center;
+    -moz-appearance: textfield;
+}
+
+.input-with-buttons input::-webkit-outer-spin-button,
+.input-with-buttons input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.adjust-btn {
+    width: 36px;
+    height: 36px;
+    background-color: var(--cell-bg);
+    border: none;
+    color: var(--text);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    margin: 0 3px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-primary {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.btn-success {
+    background-color: var(--success);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    justify-content: center;
+    font-size: 0.9rem;
+}
+
+.game-info {
+    margin-top: 10px;
+}
+
+.result-message {
+    padding: 12px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+    background-color: var(--cell-bg);
+    font-size: 0.9rem;
+}
+
+.win {
+    color: var(--success);
+    box-shadow: 0 0 10px rgba(0, 200, 83, 0.3);
+}
+
+.lose {
+    color: var(--danger);
+    box-shadow: 0 0 10px rgba(255, 23, 68, 0.3);
+}
+
+/* Game Board */
+.game-board {
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+}
+
+.mines-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    width: 100%;
+    max-width: 350px;
+}
+
+.cell {
+    aspect-ratio: 1/1;
+    background-color: var(--cell-bg);
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #2a2a4a;
+    user-select: none;
+}
+
+.cell.revealed {
+    background-color: var(--cell-revealed);
+    cursor: default;
+}
+
+.cell.revealed.mine {
+    background-color: var(--danger);
+    animation: pulse 0.5s ease-in-out;
+}
+
+.cell.revealed.gem {
+    background-color: var(--success);
+    animation: pulse 0.5s ease-in-out;
+}
+
+.cell.revealed.mine::after {
+    content: '💣';
+    font-size: 24px;
+}
+
+.cell.revealed.gem::after {
+    content: '💎';
+    font-size: 24px;
+}
+
+/* Footer */
+.game-footer {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 15px;
+    background-color: rgba(0, 0, 0, 0.2);
+    gap: 10px;
+}
+
+.btn-secondary {
+    background-color: var(--cell-bg);
+    color: var(--text);
+    border: none;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+
+/* QR Sidebar */
 .qr-sidebar {
     width: 100%;
     background-color: var(--cell-bg);
@@ -137,196 +331,7 @@ body {
     text-align: center;
 }
 
-.control-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.bet-controls {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-}
-
-.input-group {
-    flex: 1;
-    min-width: 150px;
-}
-
-.input-group label {
-    display: block;
-    margin-bottom: 6px;
-    font-size: 0.8rem;
-    color: var(--text-secondary);
-}
-
-.input-with-buttons {
-    display: flex;
-    align-items: center;
-}
-
-.input-with-buttons input {
-    flex: 1;
-    padding: 10px;
-    background-color: var(--cell-bg);
-    border: none;
-    border-radius: 6px;
-    color: var(--text);
-    font-size: 1rem;
-    text-align: center;
-}
-
-.adjust-btn {
-    width: 36px;
-    height: 36px;
-    background-color: var(--cell-bg);
-    border: none;
-    color: var(--text);
-    font-size: 1rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 6px;
-    margin: 0 3px;
-    will-change: transform;
-}
-.game-ended {
-    pointer-events: none;
-}
-
-.game-ended .cell {
-    opacity: 0.85;
-    filter: brightness(0.8);
-}
-
-.game-ended .cell.revealed {
-    opacity: 1;
-    filter: none;
-}
-
-.action-buttons {
-    display: flex;
-    gap: 10px;
-}
-
-.btn-primary, .btn-success, .btn-secondary {
-    border: none;
-    padding: 12px;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: center;
-    font-size: 0.9rem;
-    will-change: transform;
-    transition: transform 0.1s ease;
-}
-
-.btn-primary {
-    background-color: var(--accent);
-    color: white;
-    flex: 1;
-}
-
-.btn-success {
-    background-color: var(--success);
-    color: white;
-    flex: 1;
-}
-
-.btn-secondary {
-    background-color: var(--cell-bg);
-    color: var(--text);
-}
-
-.game-info {
-    margin-top: 10px;
-}
-
-.result-message {
-    padding: 12px;
-    border-radius: 6px;
-    text-align: center;
-    font-weight: bold;
-    background-color: var(--cell-bg);
-    font-size: 0.9rem;
-}
-
-.win {
-    color: var(--success);
-    box-shadow: 0 0 10px rgba(0, 200, 83, 0.3);
-}
-
-.lose {
-    color: var(--danger);
-    box-shadow: 0 0 10px rgba(255, 23, 68, 0.3);
-}
-
-.game-board {
-    display: flex;
-    justify-content: center;
-    padding: 5px;
-}
-
-.mines-grid {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 4px;
-    width: 100%;
-    max-width: 350px;
-    will-change: transform;
-}
-
-.cell {
-    aspect-ratio: 1;
-    background-color: var(--cell-bg);
-    border-radius: 6px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    border: 1px solid #2a2a4a;
-    will-change: transform, background-color;
-    transform: translateZ(0);
-}
-
-.cell.revealed {
-    background-color: var(--cell-revealed);
-    cursor: default;
-}
-
-.cell.revealed.mine {
-    background-color: var(--danger);
-}
-
-.cell.revealed.gem {
-    background-color: var(--success);
-}
-
-.cell.revealed.mine::after {
-    content: '💣';
-    font-size: 24px;
-}
-
-.cell.revealed.gem::after {
-    content: '💎';
-    font-size: 24px;
-}
-
-.game-footer {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 15px;
-    background-color: rgba(0, 0, 0, 0.2);
-    gap: 10px;
-}
-
+/* Modals */
 .modal {
     position: fixed;
     top: 0;
@@ -380,6 +385,7 @@ body {
     gap: 10px;
 }
 
+/* Install Button */
 .btn-install {
     position: fixed;
     bottom: 20px;
@@ -388,52 +394,88 @@ body {
     background: linear-gradient(135deg, var(--accent), var(--accent-light));
     color: white;
     border: none;
-    border-radius: 50px;
     padding: 12px 20px;
+    border-radius: 50px;
     font-weight: bold;
     box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
     display: flex;
     align-items: center;
     gap: 8px;
-    will-change: transform;
 }
 
+/* Animations */
 @keyframes pulse {
     0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+    50% { transform: scale(1.1); }
     100% { transform: scale(1); }
 }
 
+/* Mobile Responsiveness */
 @media (max-width: 768px) {
     .game-container {
-        max-width: 100%;
-        margin: 0;
-        border-radius: 0;
-        min-height: 100vh;
+        margin: 10px;
+        border-radius: 8px;
     }
     
-    .mines-grid {
-        gap: 2px;
+    .game-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+        padding: 15px 10px;
     }
     
-    .cell {
-        font-size: 1.5rem !important;
-    }
-    
-    .cell.revealed.mine::after,
-    .cell.revealed.gem::after {
-        font-size: 20px;
-    }
-    
-    .header-left h1 {
-        font-size: 1.2rem;
+    .header-left, .header-right {
+        width: 100%;
     }
     
     .balance-display {
-        padding: 6px 8px;
+        justify-content: center;
+    }
+    
+    .bet-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .input-with-buttons input {
+        padding: 12px;
+        font-size: 16px;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+    }
+    
+    .btn-primary,
+    .btn-success {
+        width: 100%;
+        padding: 14px;
+    }
+    
+    .mines-grid {
+        gap: 5px;
+    }
+    
+    .cell {
+        font-size: 1.2rem;
+    }
+    
+    .game-footer {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .btn-secondary {
+        width: 100%;
+    }
+    
+    /* Prevent iOS zoom */
+    input, select, textarea {
+        font-size: 16px !important;
     }
 }
 
+/* Desktop Layout */
 @media (min-width: 769px) {
     .game-main {
         flex-direction: row;
