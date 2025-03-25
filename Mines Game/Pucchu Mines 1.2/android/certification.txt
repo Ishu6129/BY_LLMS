@@ -1,6 +1,6 @@
 ---------------------------------------------------
 Here are the ownership and the certification details
-of the Pucchu Mines 1.0
+of the Pucchu Mines 1.2
 ---------------------------------------------------
 
 app_name - 						Pucchu Mines
@@ -12,12 +12,12 @@ app_author_locality - 			My Company
 app_author_state - 				Uttar Pradesh
 app_author_country - 			India
 app_password - 					lz6dMwjRVo1R
-app_versionName - 				versionName "1.0"
-app_versionCode - 				100
+app_versionName - 				versionName "1.2"
+app_versionCode - 				102
 
 ---------------------------------------------------
 The certification was created by WebIntoApp.com at
-the Tuesday 25th of March 2025 06:22:13 PM
+the Tuesday 25th of March 2025 06:42:15 PM
 
 https://www.webintoapp.com
 ---------------------------------------------------

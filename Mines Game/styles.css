@@ -255,6 +255,11 @@ body {
     overflow: hidden;
     border: 1px solid #2a2a4a;
     user-select: none;
+    transition: transform 0.2s;
+}
+
+.cell:active {
+    transform: scale(0.95);
 }
 
 .cell.revealed {
@@ -264,12 +269,12 @@ body {
 
 .cell.revealed.mine {
     background-color: var(--danger);
-    animation: pulse 0.5s ease-in-out;
+    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
 }
 
 .cell.revealed.gem {
     background-color: var(--success);
-    animation: pulse 0.5s ease-in-out;
+    animation: bounce 0.5s;
 }
 
 .cell.revealed.mine::after {
@@ -435,7 +440,37 @@ body {
     gap: 8px;
 }
 
-/* Animations */
+/* Offline Indicator */
+.offline-indicator {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background-color: var(--danger);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    z-index: 1000;
+    display: none;
+}
+
+body.offline .offline-indicator {
+    display: block;
+}
+
+/* Sound Animations */
+@keyframes shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
 @keyframes pulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.1); }

@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Pucchu Mines">
     <title>PucchuMines</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json" crossorigin="use-credentials">
-    <link rel="apple-touch-icon" href="https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/1f4a3.svg">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     <meta name="theme-color" content="#ff6b6b">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Pucchu Mines">
     <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
 </head>
 <body>
-    <!-- Install Button (will be shown when PWA is installable) -->
+    <!-- Install Button -->
     <button id="installBtn" class="btn-install" style="display: none;">
         <i class="fas fa-download"></i> INSTALL APP
     </button>
@@ -105,6 +105,7 @@
         </footer>
     </div>
 
+    <!-- Modals -->
     <div id="transactionModal" class="modal">
         <div class="modal-content">
             <h2 id="modalTitle"><i class="fas fa-coins"></i> Deposit</h2>
@@ -126,6 +127,14 @@
             <button id="closeMessage" class="btn-primary">OK</button>
         </div>
     </div>
+
+    <!-- Audio Elements -->
+    <audio id="gemSound" preload="auto">
+        <source src="sounds/gem.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="explosionSound" preload="auto">
+        <source src="sounds/explosion.mp3" type="audio/mpeg">
+    </audio>
 
     <script src="script.js"></script>
 </body>

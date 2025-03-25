@@ -23,6 +23,10 @@ const depositBtn = document.getElementById('depositBtn');
 const withdrawBtn = document.getElementById('withdrawBtn');
 const qrCodeElement = document.getElementById('qrCode');
 
+// Sound Elements
+const gemSound = document.getElementById('gemSound');
+const explosionSound = document.getElementById('explosionSound');
+
 // Modal Elements
 const transactionModal = document.getElementById('transactionModal');
 const amountInput = document.getElementById('amountInput');
@@ -35,11 +39,12 @@ const messageTitle = document.getElementById('messageTitle');
 const messageText = document.getElementById('messageText');
 const closeMessage = document.getElementById('closeMessage');
 
-// Adjustment Buttons
-const decreaseBet = document.getElementById('decreaseBet');
-const increaseBet = document.getElementById('increaseBet');
-const decreaseMines = document.getElementById('decreaseMines');
-const increaseMines = document.getElementById('increaseMines');
+// PWA Elements
+const installBtn = document.getElementById('installBtn');
+const offlineIndicator = document.createElement('div');
+offlineIndicator.className = 'offline-indicator';
+offlineIndicator.textContent = 'Offline Mode';
+document.body.appendChild(offlineIndicator);
 
 // Initialize Game
 function init() {
@@ -48,6 +53,7 @@ function init() {
     setupTouchControls();
     renderGrid();
     generateQRCode();
+    checkConnectivity();
 }
 
 // Setup Event Listeners
@@ -80,6 +86,10 @@ function setupEventListeners() {
     // Input Validation
     betAmountInput.addEventListener('change', validateBetAmount);
     mineCountInput.addEventListener('change', validateMineCount);
+    
+    // Network Status
+    window.addEventListener('online', checkConnectivity);
+    window.addEventListener('offline', checkConnectivity);
 }
 
 // Setup Touch Controls
@@ -98,6 +108,24 @@ function handleTouchEnd(e) {
         handleCellClick(index);
     }
     e.preventDefault();
+}
+
+// Check Network Connectivity
+function checkConnectivity() {
+    if (navigator.onLine) {
+        document.body.classList.remove('offline');
+        if (gameActive) {
+            gameResult.textContent = 'Connection restored';
+            setTimeout(() => {
+                if (gameActive) gameResult.textContent = 'Game in progress';
+            }, 2000);
+        }
+    } else {
+        document.body.classList.add('offline');
+        if (gameActive) {
+            gameResult.textContent = 'Offline - game continues to work';
+        }
+    }
 }
 
 // Update Balance Display
@@ -242,9 +270,18 @@ function handleCellClick(index) {
     
     if (mines.includes(index)) {
         cell.classList.add('mine');
+        // Play explosion sound
+        explosionSound.currentTime = 0;
+        explosionSound.play()
+            .catch(e => console.log("Audio play failed:", e));
         endGame(false);
         return;
     }
+    
+    // Play gem sound
+    gemSound.currentTime = 0;
+    gemSound.play()
+        .catch(e => console.log("Audio play failed:", e));
     
     // Safe cell logic
     cell.classList.add('gem');
@@ -343,14 +380,57 @@ function showGameError(message) {
     gameResult.className = 'result-message lose';
 }
 
+// PWA Installation Handling
+let deferredPrompt;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display = 'flex';
+});
+
+installBtn.addEventListener('click', () => {
+  installBtn.style.display = 'none';
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then((choiceResult) => {
+    if (choiceResult.outcome === 'accepted') {
+      console.log('User installed PWA');
+    }
+    deferredPrompt = null;
+  });
+});
+
+window.addEventListener('appinstalled', () => {
+  installBtn.style.display = 'none';
+  deferredPrompt = null;
+});
+
+// Service Worker Registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(registration => {
+        console.log('ServiceWorker registered');
+        
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              console.log('New content available - please refresh');
+              showMessage('Update Available', 'A new version is available. Please refresh the app.');
+            }
+          });
+        });
+      })
+      .catch(err => {
+        console.log('ServiceWorker registration failed: ', err);
+      });
+  });
+
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload();
+  });
+}
+
 // Initialize the game
 document.addEventListener('DOMContentLoaded', init);
-
-// Service Worker for PWA
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-            .then(registration => console.log('ServiceWorker registered'))
-            .catch(err => console.log('ServiceWorker registration failed: ', err));
-    });
-}
