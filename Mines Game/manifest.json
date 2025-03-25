@@ -1,13 +1,8 @@
 {
-  "name": "Mines Game",
-  "short_name": "Mines",
-  "start_url": "index.html",
-  "display": "standalone",
-  "background_color": "#0f0f1a",
-  "theme_color": "#ff6b6b",
-  "icons": [{
-    "src": "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f4a3.png",
-    "sizes": "72x72",
-    "type": "image/png"
-  }]
+  "name": "Pucchu Mines",
+  "theme_color": "#94d5d5",
+  "background_color": "#caaff0",
+  "short_name": "pu_mines",
+  "id": "mines",
+  "description": "This is a game where you find mines and avoid bombs also you can scan qr and and get the location of mines buy scanning it through any scanner"
 }
