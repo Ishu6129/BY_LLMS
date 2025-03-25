@@ -161,7 +161,7 @@ function startGame() {
     const betAmount = parseInt(betAmountInput.value);
     mineCount = parseInt(mineCountInput.value);
     
-    if (isNaN(betAmount) {
+    if (isNaN(betAmount)) {
         showGameError('Invalid bet amount');
         return;
     }
