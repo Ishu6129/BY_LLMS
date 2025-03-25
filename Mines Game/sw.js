@@ -1,3 +1,20 @@
-const CACHE_NAME = 'mines-game-v1';
-self.addEventListener('install', () => self.skipWaiting());
-self.addEventListener('fetch', (e) => e.respondWith(fetch(e.request)));
+const CACHE_NAME = 'mines-game-cache-v1';
+const urlsToCache = [
+  './',
+  './index.html',
+  './styles.css',
+  './script.js'
+];
+
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(urlsToCache)))
+});
+
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => response || fetch(event.request))
+  );
+});
