@@ -1,7 +1,7 @@
 
 FREE APP
 
-Created by WebIntoApp.com on Tuesday 25th of March 2025 06:42:15 PM.
+Created by WebIntoApp.com on Tuesday 25th of March 2025 07:11:10 PM.
 
 Release APK & App Bundle (AAB) ready to be submitted to Google Play Store 
 and to any other APK / AAB store over the internet.
@@ -10,7 +10,7 @@ and to any other APK / AAB store over the internet.
 App ID:			668035
 App Key:		eCVRMDMgMxYukuvaLliPpNynNNaCbAZc
 App Name:		Pucchu Mines
-App Version:	1.2
+App Version:	1.3
 Package:		com.pucchu.pucchumines
 Mode:			Free App
 -------------------------------------
