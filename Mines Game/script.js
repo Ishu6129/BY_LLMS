@@ -9,8 +9,6 @@ let mineCount = 5;
 let multiplier = 1;
 let currentWinnings = 0;
 let transactionType = 'deposit';
-let lastRenderTime = 0;
-const fps = 30;
 
 // DOM Elements
 const balanceElement = document.getElementById('balanceValue');
@@ -47,66 +45,9 @@ const increaseMines = document.getElementById('increaseMines');
 function init() {
     updateBalance();
     setupEventListeners();
+    setupTouchControls();
     renderGrid();
     generateQRCode();
-    setupTouchControls();
-    requestAnimationFrame(gameLoop);
-}
-
-// Setup PWA features
-function setupApp() {
-    document.addEventListener('gesturestart', function(e) {
-        e.preventDefault();
-    });
-}
-
-// Game Loop
-function gameLoop(timestamp) {
-    if (timestamp - lastRenderTime < 1000/fps) {
-        requestAnimationFrame(gameLoop);
-        return;
-    }
-    lastRenderTime = timestamp;
-    
-    // Update game state if needed
-    requestAnimationFrame(gameLoop);
-}
-
-// Setup Touch Controls
-function setupTouchControls() {
-    let touchStartTime = 0;
-    let touchStartX, touchStartY;
-    
-    gameGrid.addEventListener('touchstart', (e) => {
-        if (!gameActive) return;
-        const touch = e.touches[0];
-        touchStartTime = Date.now();
-        touchStartX = touch.clientX;
-        touchStartY = touch.clientY;
-        e.preventDefault();
-    }, { passive: false });
-    
-    gameGrid.addEventListener('touchend', (e) => {
-        if (!gameActive || Date.now() - touchStartTime > 300) return;
-        
-        const touch = e.changedTouches[0];
-        const touchEndX = touch.clientX;
-        const touchEndY = touch.clientY;
-        
-        if (Math.abs(touchEndX - touchStartX) < 10 && Math.abs(touchEndY - touchStartY) < 10) {
-            const element = document.elementFromPoint(touchEndX, touchEndY);
-            if (element && element.classList.contains('cell')) {
-                const index = parseInt(element.dataset.index);
-                handleCellClick(index);
-            }
-        }
-        e.preventDefault();
-    }, { passive: false });
-}
-
-// Update Balance Display
-function updateBalance() {
-    balanceElement.textContent = balance.toFixed(2);
 }
 
 // Setup Event Listeners
@@ -141,6 +82,29 @@ function setupEventListeners() {
     mineCountInput.addEventListener('change', validateMineCount);
 }
 
+// Setup Touch Controls
+function setupTouchControls() {
+    gameGrid.addEventListener('touchend', handleTouchEnd, { passive: false });
+}
+
+function handleTouchEnd(e) {
+    if (!gameActive) return;
+    
+    const touch = e.changedTouches[0];
+    const element = document.elementFromPoint(touch.clientX, touch.clientY);
+    
+    if (element && element.classList.contains('cell')) {
+        const index = parseInt(element.dataset.index);
+        handleCellClick(index);
+    }
+    e.preventDefault();
+}
+
+// Update Balance Display
+function updateBalance() {
+    balanceElement.textContent = balance.toFixed(2);
+}
+
 // Adjust Input Values
 function adjustValue(inputId, change) {
     const input = document.getElementById(inputId);
@@ -156,7 +120,7 @@ function adjustValue(inputId, change) {
     input.value = value;
 }
 
-// Validate Bet Amount
+// Validate Inputs
 function validateBetAmount() {
     let value = parseInt(betAmountInput.value);
     if (isNaN(value) || value < 1) {
@@ -164,7 +128,6 @@ function validateBetAmount() {
     }
 }
 
-// Validate Mine Count
 function validateMineCount() {
     let value = parseInt(mineCountInput.value);
     if (isNaN(value) || value < 1) {
@@ -193,13 +156,13 @@ function generateQRCode() {
     qrCodeElement.innerHTML = qr.createImgTag(4);
 }
 
-// Start New Game
+// Game Control Functions
 function startGame() {
     const betAmount = parseInt(betAmountInput.value);
     mineCount = parseInt(mineCountInput.value);
     
-    if (isNaN(betAmount) || betAmount < 1) {
-        showGameError('Please enter a valid bet amount');
+    if (isNaN(betAmount) {
+        showGameError('Invalid bet amount');
         return;
     }
     
@@ -209,35 +172,58 @@ function startGame() {
     }
     
     if (isNaN(mineCount) || mineCount < 1 || mineCount > 24) {
-        showGameError('Number of mines must be between 1-24');
+        showGameError('Mines must be 1-24');
         return;
     }
     
+    // Reset game state
     balance -= betAmount;
     currentBet = betAmount;
-    updateBalance();
-    
     gameActive = true;
     revealedCells = 0;
-    multiplier = 1;
-    currentWinnings = 0;
     mines = [];
+    currentWinnings = 0;
+    multiplier = 1;
     
+    // Update UI
+    updateBalance();
     gameResult.textContent = 'Game started! Tap cells to reveal';
     gameResult.className = 'result-message';
     claimBtn.disabled = true;
     claimAmountElement.textContent = '0.00';
+    gameGrid.classList.remove('game-ended');
     
+    // Setup game
     generateMines();
     renderGrid();
     generateQRCode();
 }
 
-// Generate Mines
+function renderGrid() {
+    gameGrid.innerHTML = '';
+    
+    for (let i = 0; i < totalCells; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'cell';
+        cell.dataset.index = i;
+        gameGrid.appendChild(cell);
+    }
+    
+    // Use event delegation
+    gameGrid.onclick = (e) => {
+        const cell = e.target.closest('.cell');
+        if (cell && gameActive) {
+            const index = parseInt(cell.dataset.index);
+            handleCellClick(index);
+        }
+    };
+}
+
 function generateMines() {
     mines = [];
     const positions = Array.from({length: totalCells}, (_, i) => i);
     
+    // Fisher-Yates shuffle
     for (let i = positions.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [positions[i], positions[j]] = [positions[j], positions[i]];
@@ -246,92 +232,59 @@ function generateMines() {
     mines = positions.slice(0, mineCount);
 }
 
-// Render Game Grid
-function renderGrid() {
-    gameGrid.innerHTML = '';
+function handleCellClick(index) {
+    if (!gameActive) return;
     
-    for (let i = 0; i < totalCells; i++) {
-        const cell = document.createElement('div');
-        cell.className = 'cell';
-        cell.dataset.index = i;
-        
-        if (gameActive) {
-            cell.addEventListener('click', () => handleCellClick(i));
-        }
-        
-        gameGrid.appendChild(cell);
+    const cell = document.querySelector(`.cell[data-index="${index}"]`);
+    if (!cell || cell.classList.contains('revealed')) return;
+    
+    cell.classList.add('revealed');
+    
+    if (mines.includes(index)) {
+        cell.classList.add('mine');
+        endGame(false);
+        return;
+    }
+    
+    // Safe cell logic
+    cell.classList.add('gem');
+    revealedCells++;
+    
+    const safeCells = totalCells - mineCount;
+    const riskFactor = revealedCells / safeCells;
+    multiplier = 1 + (riskFactor * (mineCount / safeCells) * 10);
+    currentWinnings = currentBet * multiplier;
+    
+    // Update UI
+    claimBtn.disabled = false;
+    claimAmountElement.textContent = currentWinnings.toFixed(2);
+    gameResult.textContent = `Multiplier: ${multiplier.toFixed(2)}x | Potential: $${currentWinnings.toFixed(2)}`;
+    gameResult.className = 'result-message win';
+    
+    // Check for win
+    if (revealedCells === safeCells) {
+        endGame(true);
     }
 }
 
-// Handle Cell Click
-const handleCellClick = (function() {
-    let lastClick = 0;
-    return function(index) {
-        const now = Date.now();
-        if (now - lastClick < 300) return;
-        lastClick = now;
-        
-        const cell = document.querySelector(`.cell[data-index="${index}"]`);
-        if (cell.classList.contains('revealed')) return;
-        
-        cell.classList.add('revealed');
-        
-        if (mines.includes(index)) {
-            cell.classList.add('mine');
-            gameOver(false);
-        } else {
-            cell.classList.add('gem');
-            revealedCells++;
-            
-            const safeCells = totalCells - mineCount;
-            const riskFactor = revealedCells / safeCells;
-            multiplier = 1 + (riskFactor * (mineCount / safeCells) * 10);
-            currentWinnings = currentBet * multiplier;
-            
-            gameResult.textContent = `Multiplier: ${multiplier.toFixed(2)}x | Potential: $${currentWinnings.toFixed(2)}`;
-            gameResult.className = 'result-message win';
-            claimBtn.disabled = false;
-            claimAmountElement.textContent = currentWinnings.toFixed(2);
-            
-            if (revealedCells === safeCells) {
-                claimWinnings();
-            }
-        }
-    };
-})();
-
-// Claim Winnings
-function claimWinnings() {
-    if (!gameActive || currentWinnings <= 0) return;
-    
-    balance += currentWinnings;
-    updateBalance();
+function endGame(win) {
     gameActive = false;
-    
-    gameResult.textContent = `You won $${currentWinnings.toFixed(2)}! (${multiplier.toFixed(2)}x)`;
-    gameResult.className = 'result-message win';
-    claimBtn.disabled = true;
-    
-    revealAllMines();
-}
-
-// Game Over
-function gameOver(win) {
-    gameActive = false;
-    claimBtn.disabled = true;
-    
-    revealAllMines();
+    gameGrid.classList.add('game-ended');
     
     if (win) {
+        balance += currentWinnings;
+        updateBalance();
         gameResult.textContent = `You won $${currentWinnings.toFixed(2)}! (${multiplier.toFixed(2)}x)`;
         gameResult.className = 'result-message win';
     } else {
         gameResult.textContent = `You lost $${currentBet.toFixed(2)}!`;
         gameResult.className = 'result-message lose';
     }
+    
+    revealAllMines();
+    claimBtn.disabled = true;
 }
 
-// Reveal All Mines
 function revealAllMines() {
     mines.forEach(index => {
         const cell = document.querySelector(`.cell[data-index="${index}"]`);
@@ -342,20 +295,18 @@ function revealAllMines() {
     generateQRCode();
 }
 
-// Show Game Error
-function showGameError(message) {
-    gameResult.textContent = message;
-    gameResult.className = 'result-message lose';
+function claimWinnings() {
+    if (!gameActive || currentWinnings <= 0) return;
+    endGame(true);
 }
 
-// Show Transaction Modal
+// Modal Functions
 function showTransactionModal(type) {
     modalTitle.innerHTML = `<i class="fas fa-${type === 'Deposit' ? 'arrow-down' : 'arrow-up'}"></i> ${type}`;
     amountInput.value = '';
     transactionModal.style.display = 'flex';
 }
 
-// Process Transaction
 function processTransaction() {
     const amount = parseFloat(amountInput.value);
     
@@ -381,11 +332,15 @@ function processTransaction() {
     transactionModal.style.display = 'none';
 }
 
-// Show Message Modal
 function showMessage(title, text) {
     messageTitle.textContent = title;
     messageText.textContent = text;
     messageModal.style.display = 'flex';
+}
+
+function showGameError(message) {
+    gameResult.textContent = message;
+    gameResult.className = 'result-message lose';
 }
 
 // Initialize the game

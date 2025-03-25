@@ -192,6 +192,19 @@ body {
     margin: 0 3px;
     will-change: transform;
 }
+.game-ended {
+    pointer-events: none;
+}
+
+.game-ended .cell {
+    opacity: 0.85;
+    filter: brightness(0.8);
+}
+
+.game-ended .cell.revealed {
+    opacity: 1;
+    filter: none;
+}
 
 .action-buttons {
     display: flex;
